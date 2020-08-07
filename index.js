@@ -21,6 +21,7 @@ async function main() {
         url = getPathFromUrl(url);
         if (url.startsWith('https://www.amazon.com')) {
             url += '?tag=shinedme-affiliation-provider'
+            return url
         } else {
             return false;
         }
@@ -30,7 +31,9 @@ async function main() {
         let { url, referer } = req.query;
         console.log(url)
         affiliationUrl = urlToAffiliationUrl(url);
+        console.log(affiliationUrl)
         if (affiliationUrl) {
+            console.log('valid affiliation url ' + affiliationUrl)
             channel.sendToQueue(queue, Buffer.from(JSON.stringify({ affiliationUrl, referer })), {
                 persistent: true
             });
