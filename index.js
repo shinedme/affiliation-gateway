@@ -1,12 +1,13 @@
 const express = require('express');
 var amqp = require('amqplib');
+const { backoff } = require('./util');
 
 let app = express()
 
 const port = 5005
 
 async function main() {
-    let rabbitmq = await amqp.connect('amqp://localhost')
+    let rabbitmq = await backoff(10, () => amqp.connect(`amqp://${process.env.RABBITMQ_HOST || 'localhost'}`))
     let channel = await rabbitmq.createChannel()
     let queue = 'task_queue'
     channel.assertQueue(queue, {
