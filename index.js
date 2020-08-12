@@ -18,24 +18,19 @@ async function main() {
         return url.split(/[?#]/)[0];
     }
 
-    function urlToAffiliationUrl(url) {
-        url = getPathFromUrl(url);
-        if (url.startsWith('https://www.amazon.com')) {
-            url += '?tag=shinedme-affiliation-provider'
-            return url
-        } else {
-            return false;
-        }
+    function urlOrigin(url) {
+        return new Url(url).origin;
     }
 
     app.get('/', (req, res) => {
-        let { url, referer } = req.query;
+        let { url, urlAppend, to } = req.query;
         console.log(url)
-        affiliationUrl = urlToAffiliationUrl(url);
-        console.log(affiliationUrl)
+        rawUrl = getPathFromUrl(url);
+        affiliationUrl = rawUrl + urlAppend;
+        origin = urlOrigin(url)
         if (affiliationUrl) {
-            console.log('valid affiliation url ' + affiliationUrl)
-            channel.sendToQueue(queue, Buffer.from(JSON.stringify({ affiliationUrl, referer })), {
+            console.log('get affiliation url ' + affiliationUrl)
+            channel.sendToQueue(queue, Buffer.from(JSON.stringify({ origin, urlAppend, to })), {
                 persistent: true
             });
             res.redirect(affiliationUrl);
