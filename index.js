@@ -19,7 +19,7 @@ async function main() {
     }
 
     function urlOrigin(url) {
-        return new Url(url).origin;
+        return new URL(url).origin;
     }
 
     app.get('/', (req, res) => {
